@@ -174,7 +174,7 @@ app.post("/addCoin", (req, res) => {
 });
 
 // Eliminar moneda del portfolio
-app.delete("/delCoin", (req, res) => {
+/*app.delete("/delCoin", (req, res) => {
   const delCoinObj = {
     nickName: req.body.nickName,
     coinSymbol: req.body.coinSymbol,
@@ -200,7 +200,7 @@ app.delete("/delCoin", (req, res) => {
       });
     }
   });
-});
+});*/
 
 // ADMIN REQUESTS
 // Eliminar usuario
