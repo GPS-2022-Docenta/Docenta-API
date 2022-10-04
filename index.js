@@ -21,7 +21,7 @@ const connection = mysql.createConnection({
   host: "docenta-db.cv2iecqvwvjp.us-east-1.rds.amazonaws.com",
   user: "admin",
   password: "huszak99borque00bernal00",
-  database: "sys",
+  database: "docenta",
 });
 
 // Página de inicio
