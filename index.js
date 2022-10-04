@@ -9,7 +9,7 @@ const path = require("path");
 
 const salt = bcrypt.genSaltSync(10);
 
-const PORT = process.env.PORT || 3306;
+const PORT = process.env.PORT || 3050;
 
 const app = express();
 
