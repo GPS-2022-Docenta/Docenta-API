@@ -69,8 +69,8 @@ app.post("/register", (req, res) => {
     password: req.body.password,
     birthday: req.body.birthday,
     country: req.body.country,
-    phone: null,
-    gender: null,
+    phone: req.body.phone,
+    gender: req.body.gender,
   };
 
   const registerSQL = "INSERT INTO Usuario SET ?";
