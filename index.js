@@ -44,7 +44,7 @@ app.get("/users", (req, res) => {
   });
 });
 
-// Obtener usuario por nickName
+// Obtener usuario por email
 app.get("/users/:email", (req, res) => {
   const { email } = req.params;
 
@@ -69,8 +69,8 @@ app.post("/register", (req, res) => {
     password: req.body.password,
     birthday: req.body.birthday,
     country: req.body.country,
-    phone: req.body.phone,
-    gender: req.body.gender,
+    phone: null,
+    gender: null,
   };
 
   const registerSQL = "INSERT INTO Usuario SET ?";
