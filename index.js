@@ -118,6 +118,46 @@ app.post("/login", (req, res) => {
   });
 });
 
+// Registrar
+app.put("/updateUser/:email", (req, res) => {
+  const { email } = req.params;
+
+  const usuarioObj = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    birthday: req.body.birthday,
+    country: req.body.country,
+    phone: req.body.phone,
+    gender: req.body.gender,
+  };
+
+  const updateSQL = "UPDATE Usuario SET ?";
+  const checkUserSQL = `SELECT * FROM Usuario WHERE email = "${email}"`;
+
+  connection.query(checkUserSQL, (error, result) => {
+    if (error) throw error;
+    if (result.length == 0) {
+      res.status(404).json({
+        response: "Usuario no encontrado...",
+      });
+    } else {
+      if (bcrypt.compareSync(usuarioObj.password, result[0].password)) {
+        res.status(304);
+        usuarioObj.password = result[0].password;
+      } else {
+        let hash = bcrypt.hashSync(usuarioObj.password, salt);
+        usuarioObj.password = hash;
+      }
+      connection.query(updateSQL, usuarioObj, (error) => {
+        if (error) throw error;
+        res.sendStatus(202);
+      });
+    }
+  });
+});
+
 // ADMIN REQUESTS
 // Eliminar usuario
 app.delete("/deleteUser/:email", (req, res) => {
