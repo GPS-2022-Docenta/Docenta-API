@@ -44,11 +44,11 @@ app.get("/users", (req, res) => {
   });
 });
 
-// Obtener usuario por email
-app.get("/users/:email", (req, res) => {
-  const { email } = req.params;
+// Obtener usuario por nickName
+app.get("/users/:nickName", (req, res) => {
+  const { nickName } = req.params;
 
-  const getOneUserSQL = `SELECT * FROM Usuario WHERE email = "${email}"`;
+  const getOneUserSQL = `SELECT * FROM Usuario WHERE nickName = "${nickName}"`;
 
   connection.query(getOneUserSQL, (err, result) => {
     if (err) throw err;
@@ -63,6 +63,7 @@ app.get("/users/:email", (req, res) => {
 // Registrar
 app.post("/register", (req, res) => {
   const usuarioObj = {
+    nickName: req.body.nickName,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
@@ -75,7 +76,7 @@ app.post("/register", (req, res) => {
 
   const registerSQL = "INSERT INTO Usuario SET ?";
   const checkUserSQL =
-    "SELECT * FROM Usuario WHERE email = '" + usuarioObj.email + "'";
+    "SELECT * FROM Usuario WHERE nickName = '" + usuarioObj.nickName + "'";
 
   connection.query(checkUserSQL, (error, result) => {
     if (error) throw error;
@@ -95,12 +96,12 @@ app.post("/register", (req, res) => {
 // Iniciar sesión
 app.post("/login", (req, res) => {
   const usuarioObj = {
-    email: req.body.email,
+    id: req.body.id,
     password: req.body.password,
   };
 
   const loginSQL =
-    "SELECT * FROM Usuario WHERE email = '" + usuarioObj.email + "'";
+    "SELECT * FROM Usuario WHERE nickName = '" + usuarioObj.id + "' OR email = '" + usuarioObj.id + "'";
 
   connection.query(loginSQL, (error, result) => {
     if (error) throw error;
@@ -118,11 +119,12 @@ app.post("/login", (req, res) => {
   });
 });
 
-// Registrar
-app.put("/updateUser/:email", (req, res) => {
-  const { email } = req.params;
+//Actualizar perfil
+app.put("/updateUser/:nickName", (req, res) => {
+  const { nickName } = req.params;
 
   const usuarioObj = {
+    nickName: req.body.nickName,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     email: req.body.email,
@@ -134,7 +136,7 @@ app.put("/updateUser/:email", (req, res) => {
   };
 
   const updateSQL = "UPDATE Usuario SET ?";
-  const checkUserSQL = `SELECT * FROM Usuario WHERE email = "${email}"`;
+  const checkUserSQL = `SELECT * FROM Usuario WHERE nickName = "${nickName}"`;
 
   connection.query(checkUserSQL, (error, result) => {
     if (error) throw error;
@@ -160,11 +162,11 @@ app.put("/updateUser/:email", (req, res) => {
 
 // ADMIN REQUESTS
 // Eliminar usuario
-app.delete("/deleteUser/:email", (req, res) => {
-  const { email } = req.params;
+app.delete("/deleteUser/:nickName", (req, res) => {
+  const { nickName } = req.params;
 
-  const checkUserSQL = `SELECT * FROM Usuario WHERE email = "${email}"`;
-  const deleteSQL = `DELETE FROM Usuario WHERE email = "${email}"`;
+  const checkUserSQL = `SELECT * FROM Usuario WHERE nickName = "${nickName}"`;
+  const deleteSQL = `DELETE FROM Usuario WHERE nickName = "${nickName}"`;
 
   connection.query(checkUserSQL, (error, result) => {
     if (error) throw error;
