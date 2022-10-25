@@ -96,13 +96,12 @@ app.post("/register", (req, res) => {
 // Iniciar sesión
 app.post("/login", (req, res) => {
   const usuarioObj = {
-    email: req.body.email,
     nickName: req.body.nickName,
     password: req.body.password,
   };
 
   const loginSQL =
-    "SELECT * FROM Usuario WHERE nickName = '" + usuarioObj.nickName + "' OR email = '" + usuarioObj.email + "'";
+    "SELECT * FROM Usuario WHERE nickName = '" + usuarioObj.nickName + "'";
 
   connection.query(loginSQL, (error, result) => {
     if (error) throw error;
