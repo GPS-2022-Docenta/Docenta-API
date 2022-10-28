@@ -13,7 +13,12 @@ const PORT = process.env.PORT || 3050;
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://docenta.vercel.app",
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT"],
+  })
+);
 app.use(bodyParser.json());
 
 // MySQL
