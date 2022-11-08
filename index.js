@@ -218,7 +218,7 @@ app.get("/cursos/:nickName", (req, res) => {
   });
 });
 
-// Obtener un curso concreto de los cursos del usuario
+// Obtener un curso concreto (por su nombre) de los cursos del usuario 
 app.get("/cursos/:nick/:nombreCurso", (req, res) => {
   const { nick } = req.params;
   const { nombreCurso } = req.params;
