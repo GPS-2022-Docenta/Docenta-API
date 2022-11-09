@@ -206,7 +206,7 @@ app.get("/cursos", (req, res) => {
 app.get("/cursos/:nickName", (req, res) => {
   const { nick } = req.params;
 
-  const getOneCursoSQL = `SELECT * FROM Curso WHERE nickName = "${nick}"`;
+  const getOneCursoSQL = `SELECT * FROM Cursos WHERE nickName = "${nick}"`;
 
   connection.query(getOneCursoSQL, (err, result) => {
     if (err) throw err;
@@ -281,7 +281,7 @@ app.post("/addCurso", (req, res) => {
   });
 });
 
-// Eliminar curso de usuario --> NO FUNCIONA POR EL NICKNAME...
+// Eliminar curso de usuario
 app.delete("/delCurso/:nick/:nombreCurso", (req, res) => {
   const { nick } = req.params;
   const { nombreCurso } = req.params;
