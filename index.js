@@ -202,7 +202,7 @@ app.get("/cursos", (req, res) => {
   });
 });
 
-// Obtener cursos para un usuario con nickName determinado --> NO FUNCIONA POR EL NICKNAME...
+// Obtener cursos para un usuario con nickName determinado
 app.get("/cursos/:nick", (req, res) => {
   const { nick } = req.params;
 
