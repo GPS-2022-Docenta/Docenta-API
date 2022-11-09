@@ -203,7 +203,7 @@ app.get("/cursos", (req, res) => {
 });
 
 // Obtener cursos para un usuario con nickName determinado --> NO FUNCIONA POR EL NICKNAME...
-app.get("/cursos/:nickName", (req, res) => {
+app.get("/cursos/:nick", (req, res) => {
   const { nick } = req.params;
 
   const getOneCursoSQL = `SELECT * FROM Cursos WHERE nickName = "${nick}"`;
@@ -218,7 +218,7 @@ app.get("/cursos/:nickName", (req, res) => {
   });
 });
 
-// Obtener un curso concreto (por su nombre) de los cursos del usuario --> NO FUNCIONA POR EL NICKNAME...
+// Obtener un curso concreto (por su nombre) de los cursos del usuario
 app.get("/cursos/:nick/:nombreCurso", (req, res) => {
   const { nick } = req.params;
   const { nombreCurso } = req.params;
