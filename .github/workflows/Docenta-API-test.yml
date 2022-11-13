@@ -1,0 +1,26 @@
+# .github/workflows/test.yml
+
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+    
+  workflow_dispatch:
+
+jobs:
+  Linux:
+    name: Validate API spec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v1
+      - uses: kong/setup-inso@v1
+        with:
+          inso-version: 2.4.0
+      - name: Lint
+        run: inso lint spec "Docenta-API" --ci
+      - name: Run test suites
+        run: inso run test uts_636e2e --env "TESTS_Docenta" --ci
+      - name: Generate declarative config
+        run: inso generate config "Docenta-API" --type declarative --ci
