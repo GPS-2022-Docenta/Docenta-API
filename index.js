@@ -202,13 +202,27 @@ app.get("/cursos", (req, res) => {
   });
 });
 
-// Obtener cursos para un usuario con nickName determinado
-app.get("/cursos/:nick", (req, res) => {
+//Obtener todos los favoritos
+app.get("/favoritos", (req, res) => {
+  const getFavoritosSQL = "SELECT * FROM Favoritos ORDER BY id ASC";
+
+  connection.query(getFavoritosSQL, (err, results) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(404).send("Vaya... el contenido que buscas no existe.");
+    }
+  });
+});
+
+// Obtener los favoritos para un usuario con nickName determinado
+app.get("/favoritos/:nick", (req, res) => {
   const { nick } = req.params;
 
-  const getOneCursoSQL = `SELECT * FROM Cursos WHERE nickName = "${nick}"`;
+  const getFavoritosUserSQL = `SELECT id FROM Favoritos WHERE nickName = "${nick}"`;
 
-  connection.query(getOneCursoSQL, (err, result) => {
+  connection.query(getFavoritosUserSQL, (err, result) => {
     if (err) throw err;
     if (result.length > 0) {
       res.status(200).json(result);
@@ -219,13 +233,13 @@ app.get("/cursos/:nick", (req, res) => {
 });
 
 // Obtener un curso concreto (por su nombre) de los cursos del usuario
-app.get("/cursos/:nick/:nombreCurso", (req, res) => {
+app.get("/favoritos/:nick/:id", (req, res) => {
   const { nick } = req.params;
-  const { nombreCurso } = req.params;
+  const { id } = req.params;
 
-  const getCursoSQL = `SELECT * FROM Cursos WHERE nombre = "${nombreCurso}" AND nickName = "${nick}"`;
+  const getFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
 
-  connection.query(getCursoSQL, (err, result) => {
+  connection.query(getFavoritoSQL, (err, result) => {
     if (err) throw err;
     if (result.length > 0) {
       res.status(200).json(result);
@@ -245,7 +259,7 @@ app.post("/addCurso", (req, res) => {
     imagen: req.body.imagen,
     enlace: req.body.enlace,
     autor: req.body.autor,
-    nickName: req.body.nickName,
+    plataforma: req.body.plataforma,
   };
 
   const checkCursoSQL =
@@ -263,8 +277,8 @@ app.post("/addCurso", (req, res) => {
     addCursoObj.enlace +
     "' AND autor = '" +
     addCursoObj.autor +
-    "' AND nickName = '" +
-    addCursoObj.nickName +
+    "' AND plataforma = '" +
+    addCursoObj.plataforma +
     "'";
   const addCursoSQL = "INSERT INTO Cursos SET ?";
 
@@ -282,17 +296,17 @@ app.post("/addCurso", (req, res) => {
 });
 
 // Eliminar curso de usuario
-app.delete("/delCurso/:nick/:nombreCurso", (req, res) => {
+app.delete("/delfavoritos/:nick/:id", (req, res) => {
   const { nick } = req.params;
-  const { nombreCurso } = req.params;
+  const { id } = req.params;
 
-  const checkCursoSQL = `SELECT * FROM Cursos WHERE nombre = "${nombreCurso}" AND nickName = "${nick}"`;
-  const delCursoSQL = `DELETE FROM Cursos WHERE nombre = "${nombreCurso}" AND nickName = "${nick}"`;
+  const checkFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
+  const delFavoritoSQL = `DELETE FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
 
-  connection.query(checkCursoSQL, (error, result) => {
+  connection.query(checkFavoritoSQL, (error, result) => {
     if (error) throw error;
     if (result.length > 0) {
-      connection.query(delCursoSQL, (error) => {
+      connection.query(delFavoritoSQL, (error) => {
         if (error) throw error;
         res.status(200).send("¡Curso eliminado correctamente!");
       });
