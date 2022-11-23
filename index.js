@@ -124,7 +124,7 @@ app.post("/login", (req, res) => {
   });
 });
 
-//Actualizar perfil
+// Actualizar perfil
 app.put("/updateUser/:nickName", (req, res) => {
   const { nickName } = req.params;
 
@@ -165,6 +165,7 @@ app.put("/updateUser/:nickName", (req, res) => {
   });
 });
 
+
 // ADMIN REQUESTS
 // Eliminar usuario
 app.delete("/deleteUser/:nickName", (req, res) => {
@@ -184,67 +185,6 @@ app.delete("/deleteUser/:nickName", (req, res) => {
       res.status(404).json({
         response: "Usuario no encontrado...",
       });
-    }
-  });
-});
-
-// Obtener todos los cursos
-app.get("/cursos", (req, res) => {
-  const getCursosSQL = "SELECT * FROM Cursos ORDER BY id ASC";
-
-  connection.query(getCursosSQL, (err, results) => {
-    if (err) throw err;
-    if (results.length > 0) {
-      res.status(200).json(results);
-    } else {
-      res.status(404).send("Vaya... el contenido que buscas no existe.");
-    }
-  });
-});
-
-//Obtener todos los favoritos
-app.get("/favoritos", (req, res) => {
-  const getFavoritosSQL = "SELECT * FROM Favoritos ORDER BY id ASC";
-
-  connection.query(getFavoritosSQL, (err, results) => {
-    if (err) throw err;
-    if (results.length > 0) {
-      res.status(200).json(results);
-    } else {
-      res.status(404).send("Vaya... el contenido que buscas no existe.");
-    }
-  });
-});
-
-// Obtener los favoritos para un usuario con nickName determinado
-app.get("/favoritos/:nick", (req, res) => {
-  const { nick } = req.params;
-
-  const getFavoritosUserSQL = `SELECT id FROM Favoritos WHERE nickName = "${nick}"`;
-
-  connection.query(getFavoritosUserSQL, (err, result) => {
-    if (err) throw err;
-    if (result.length > 0) {
-      res.status(200).json(result);
-    } else {
-      res.status(404).send("Contenido no encontrado...");
-    }
-  });
-});
-
-// Obtener un curso concreto (por su nombre) de los cursos del usuario
-app.get("/favoritos/:nick/:id", (req, res) => {
-  const { nick } = req.params;
-  const { id } = req.params;
-
-  const getFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
-
-  connection.query(getFavoritoSQL, (err, result) => {
-    if (err) throw err;
-    if (result.length > 0) {
-      res.status(200).json(result);
-    } else {
-      res.status(404).send("Contenido no encontrado...");
     }
   });
 });
@@ -295,7 +235,92 @@ app.post("/addCurso", (req, res) => {
   });
 });
 
-// Eliminar curso de usuario
+// Eliminar curso
+app.delete("/deleteCurso/:id", (req, res) => {
+  const { id } = req.params;
+
+  const checkCursoSQL = `SELECT * FROM Cursos WHERE id = "${id}"`;
+  const deleteSQL = `DELETE FROM Cursos WHERE id = "${id}"`;
+
+  connection.query(checkCursoSQL, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0) {
+      connection.query(deleteSQL, (error) => {
+        if (error) throw error;
+        res.status(200).send("¡Curso eliminado correctamente!");
+      });
+    } else {
+      res.status(404).json({
+        response: "Curso no encontrado...",
+      });
+    }
+  });
+});
+
+
+// COURSE REQUESTS
+// Obtener todos los cursos
+app.get("/cursos", (req, res) => {
+  const getCursosSQL = "SELECT * FROM Cursos ORDER BY id ASC";
+
+  connection.query(getCursosSQL, (err, results) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(404).send("Vaya... el contenido que buscas no existe.");
+    }
+  });
+});
+
+// Obtener todos los favoritos
+app.get("/favoritos", (req, res) => {
+  const getFavoritosSQL = "SELECT * FROM Favoritos ORDER BY id ASC";
+
+  connection.query(getFavoritosSQL, (err, results) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(404).send("Vaya... el contenido que buscas no existe.");
+    }
+  });
+});
+
+// Obtener los favoritos para un usuario con nickName determinado
+app.get("/favoritos/:nick", (req, res) => {
+  const { nick } = req.params;
+
+  const getFavoritosUserSQL = `SELECT id FROM Favoritos WHERE nickName = "${nick}"`;
+
+  connection.query(getFavoritosUserSQL, (err, result) => {
+    if (err) throw err;
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).send("Contenido no encontrado...");
+    }
+  });
+});
+
+// Obtener un curso concreto (por su nombre) de los cursos del usuario
+app.get("/favoritos/:nick/:id", (req, res) => {
+  const { nick } = req.params;
+  const { id } = req.params;
+
+  const getFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
+
+  connection.query(getFavoritoSQL, (err, result) => {
+    if (err) throw err;
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).send("Contenido no encontrado...");
+    }
+  });
+});
+
+// Eliminar curso de usuario de favoritos
 app.delete("/delfavoritos/:nick/:id", (req, res) => {
   const { nick } = req.params;
   const { id } = req.params;
