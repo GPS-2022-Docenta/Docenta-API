@@ -138,7 +138,7 @@ app.post("/login", (req, res) => {
   });
 });
 
-//Actualizar perfil
+// Actualizar perfil
 app.put("/updateUser/:nickName", (req, res) => {
   const { nickName } = req.params;
 
@@ -179,6 +179,7 @@ app.put("/updateUser/:nickName", (req, res) => {
   });
 });
 
+
 // ADMIN REQUESTS
 // Eliminar usuario
 app.delete("/deleteUser/:nickName", (req, res) => {
@@ -197,6 +198,160 @@ app.delete("/deleteUser/:nickName", (req, res) => {
     } else {
       res.status(404).json({
         response: "Usuario no encontrado...",
+      });
+    }
+  });
+});
+
+// Añadir curso
+app.post("/addCurso", (req, res) => {
+  const addCursoObj = {
+    id: req.body.id,
+    nombre: req.body.nombre,
+    categoria: req.body.categoria,
+    descripcion: req.body.descripcion,
+    imagen: req.body.imagen,
+    enlace: req.body.enlace,
+    autor: req.body.autor,
+    plataforma: req.body.plataforma,
+  };
+
+  const checkCursoSQL =
+    "SELECT * FROM Cursos WHERE id = '" +
+    addCursoObj.id +
+    "' AND nombre = '" +
+    addCursoObj.nombre +
+    "' AND categoria = '" +
+    addCursoObj.categoria +
+    "' AND descripcion = '" +
+    addCursoObj.descripcion +
+    "' AND imagen = '" +
+    addCursoObj.imagen +
+    "' AND enlace = '" +
+    addCursoObj.enlace +
+    "' AND autor = '" +
+    addCursoObj.autor +
+    "' AND plataforma = '" +
+    addCursoObj.plataforma +
+    "'";
+  const addCursoSQL = "INSERT INTO Cursos SET ?";
+
+  connection.query(checkCursoSQL, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0) {
+      res.sendStatus(409);
+    } else {
+      connection.query(addCursoSQL, addCursoObj, (error) => {
+        if (error) throw error;
+        res.sendStatus(201);
+      });
+    }
+  });
+});
+
+// Eliminar curso
+app.delete("/deleteCurso/:id", (req, res) => {
+  const { id } = req.params;
+
+  const checkCursoSQL = `SELECT * FROM Cursos WHERE id = "${id}"`;
+  const deleteSQL = `DELETE FROM Cursos WHERE id = "${id}"`;
+
+  connection.query(checkCursoSQL, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0) {
+      connection.query(deleteSQL, (error) => {
+        if (error) throw error;
+        res.status(200).send("¡Curso eliminado correctamente!");
+      });
+    } else {
+      res.status(404).json({
+        response: "Curso no encontrado...",
+      });
+    }
+  });
+});
+
+
+// COURSE REQUESTS
+// Obtener todos los cursos
+app.get("/cursos", (req, res) => {
+  const getCursosSQL = "SELECT * FROM Cursos ORDER BY id ASC";
+
+  connection.query(getCursosSQL, (err, results) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(404).send("Vaya... el contenido que buscas no existe.");
+    }
+  });
+});
+
+// Obtener todos los favoritos
+app.get("/favoritos", (req, res) => {
+  const getFavoritosSQL = "SELECT * FROM Favoritos ORDER BY id ASC";
+
+  connection.query(getFavoritosSQL, (err, results) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(404).send("Vaya... el contenido que buscas no existe.");
+    }
+  });
+});
+
+// Obtener los favoritos para un usuario con nickName determinado
+app.get("/favoritos/:nick", (req, res) => {
+  const { nick } = req.params;
+
+  const getFavoritosUserSQL = `SELECT id FROM Favoritos WHERE nickName = "${nick}"`;
+
+  connection.query(getFavoritosUserSQL, (err, result) => {
+    if (err) throw err;
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).send("Contenido no encontrado...");
+    }
+  });
+});
+
+// Obtener un curso concreto (por su nombre) de los cursos del usuario
+app.get("/favoritos/:nick/:id", (req, res) => {
+  const { nick } = req.params;
+  const { id } = req.params;
+
+  const getFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
+
+  connection.query(getFavoritoSQL, (err, result) => {
+    if (err) throw err;
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).send("Contenido no encontrado...");
+    }
+  });
+});
+
+// Eliminar curso de usuario de favoritos
+app.delete("/delfavoritos/:nick/:id", (req, res) => {
+  const { nick } = req.params;
+  const { id } = req.params;
+
+  const checkFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
+  const delFavoritoSQL = `DELETE FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
+
+  connection.query(checkFavoritoSQL, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0) {
+      connection.query(delFavoritoSQL, (error) => {
+        if (error) throw error;
+        res.status(200).send("¡Curso eliminado correctamente!");
+      });
+    } else {
+      res.status(404).json({
+        response: "Curso no encontrado...",
       });
     }
   });
