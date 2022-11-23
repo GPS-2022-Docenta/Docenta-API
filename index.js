@@ -179,7 +179,6 @@ app.put("/updateUser/:nickName", (req, res) => {
   });
 });
 
-
 // ADMIN REQUESTS
 // Eliminar usuario
 app.delete("/deleteUser/:nickName", (req, res) => {
@@ -271,10 +270,9 @@ app.delete("/deleteCurso/:id", (req, res) => {
   });
 });
 
-
 // COURSE REQUESTS
 // Obtener todos los cursos
-app.get("/cursos", (req, res) => {
+app.get("/courses", (req, res) => {
   const getCursosSQL = "SELECT * FROM Cursos ORDER BY id ASC";
 
   connection.query(getCursosSQL, (err, results) => {
@@ -334,8 +332,36 @@ app.get("/favoritos/:nick/:id", (req, res) => {
   });
 });
 
+// Añadir curso a favoritos
+app.post("/addFavCourse", (req, res) => {
+  const addFavObj = {
+    nickName: req.body.nickName,
+    id: req.body.id,
+  };
+
+  const checkFavoritoSQL =
+    "SELECT * FROM Favoritos WHERE id = '" +
+    addCoinObj.coinSymbol +
+    "' AND nickName = '" +
+    addCoinObj.nickName +
+    "'";
+  const addFavoritoSQL = "INSERT INTO Favoritos SET ?";
+
+  connection.query(checkFavoritoSQL, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0) {
+      res.sendStatus(409);
+    } else {
+      connection.query(addFavoritoSQL, addFavObj, (error) => {
+        if (error) throw error;
+        res.sendStatus(201);
+      });
+    }
+  });
+});
+
 // Eliminar curso de usuario de favoritos
-app.delete("/delfavoritos/:nick/:id", (req, res) => {
+app.delete("/delFavCourse/:nick/:id", (req, res) => {
   const { nick } = req.params;
   const { id } = req.params;
 
