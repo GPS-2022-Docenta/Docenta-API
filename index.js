@@ -13,12 +13,26 @@ const PORT = process.env.PORT || 3050;
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "https://docenta.vercel.app",
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT"],
-  })
-);
+/* var allowedOrigins = ["https://docenta.vercel.app"];
+
+var corsOptions = {
+  origin: function (origin, callback) {
+    // allow requests with no origin
+    // (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      var msg =
+        "The CORS policy for this site does not " +
+        "allow access from the specified Origin.";
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+};
+
+app.use(cors(corsOptions)); */
+
+app.use(cors());
 app.use(bodyParser.json());
 
 // MySQL
@@ -159,7 +173,7 @@ app.put("/updateUser/:nickName", (req, res) => {
       }
       connection.query(updateSQL, usuarioObj, (error) => {
         if (error) throw error;
-        res.sendStatus(202);
+        res.sendStatus(200);
       });
     }
   });
@@ -178,7 +192,7 @@ app.delete("/deleteUser/:nickName", (req, res) => {
     if (result.length > 0) {
       connection.query(deleteSQL, (error) => {
         if (error) throw error;
-        res.status(200).send("¡Usuario eliminado correctamente!");
+        res.status(204).send("¡Usuario eliminado correctamente!");
       });
     } else {
       res.status(404).json({
