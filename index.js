@@ -370,7 +370,6 @@ app.put("/updateFavCourse/:nick/:id", (req, res) => {
   });
 });
 
-
 // Eliminar curso de usuario de favoritos
 app.delete("/delFavCourse/:nick/:id", (req, res) => {
   const { nick } = req.params;
@@ -390,6 +389,36 @@ app.delete("/delFavCourse/:nick/:id", (req, res) => {
       res.status(404).json({
         response: "Curso no encontrado...",
       });
+    }
+  });
+});
+
+//Top 3 cursos más guardados en favoritos
+app.get("/courseStats", (req, res) => {
+  const top3CourseSQL =
+    "SELECT id FROM Favoritos GROUP BY id ORDER BY count(id) DESC LIMIT 3";
+
+  connection.query(top3CourseSQL, (err, results) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(404).send("Vaya... el contenido que buscas no existe.");
+    }
+  });
+});
+
+// Top 3 países más registrados
+app.get("/countryStats", (req, res) => {
+  const top3CountriesSQL =
+    "SELECT country FROM Usuario GROUP BY country ORDER BY count(country) DESC LIMIT 3";
+
+  connection.query(top3CountriesSQL, (err, results) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.status(200).json(results);
+    } else {
+      res.status(404).send("Vaya... el contenido que buscas no existe.");
     }
   });
 });
