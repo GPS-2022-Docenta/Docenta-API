@@ -322,9 +322,9 @@ app.post("/addFavCourse", (req, res) => {
 
   const checkFavoritoSQL =
     "SELECT * FROM Favoritos WHERE id = '" +
-    addCoinObj.coinSymbol +
+    addFavObj.id +
     "' AND nickName = '" +
-    addCoinObj.nickName +
+    addFavObj.nickName +
     "'";
   const addFavoritoSQL = "INSERT INTO Favoritos SET ?";
 
