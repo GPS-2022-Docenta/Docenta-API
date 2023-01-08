@@ -318,6 +318,7 @@ app.post("/addFavCourse", (req, res) => {
   const addFavObj = {
     nickName: req.body.nickName,
     id: req.body.id,
+    progreso: 0,
   };
 
   const checkFavoritoSQL =
@@ -325,6 +326,8 @@ app.post("/addFavCourse", (req, res) => {
     addFavObj.id +
     "' AND nickName = '" +
     addFavObj.nickName +
+    "' AND progreso = '" +
+    addFavObj.progreso +
     "'";
   const addFavoritoSQL = "INSERT INTO Favoritos SET ?";
 
@@ -340,6 +343,33 @@ app.post("/addFavCourse", (req, res) => {
     }
   });
 });
+
+//Update para modificar el proceso.
+app.put("/updateFavCourse/:nick/:id", (req, res) => {
+  const { nick } = req.params;
+  const { id } = req.params;
+  const updateFavObj = {
+    progreso: req.body.progreso,
+  };
+
+  const checkFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
+  const updateFavoritoSQL = "UPDATE Favoritos SET ?";
+
+  connection.query(checkFavoritoSQL, (error, result) => {
+    if (error) throw error;
+    if (result.length > 0) {
+      connection.query(updateFavoritoSQL, updateFavObj, (error) => {
+        if (error) throw error;
+        res.status(200).send("¡Favorito actualizado correctamente!");
+      });
+    } else {
+      res.status(404).json({
+        response: "Favorito no encontrado...",
+      });
+    }
+  });
+});
+
 
 // Eliminar curso de usuario de favoritos
 app.delete("/delFavCourse/:nick/:id", (req, res) => {
