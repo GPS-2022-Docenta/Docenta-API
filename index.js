@@ -353,7 +353,7 @@ app.put("/updateFavCourse/:nick/:id", (req, res) => {
   };
 
   const checkFavoritoSQL = `SELECT * FROM Favoritos WHERE id = "${id}" AND nickName = "${nick}"`;
-  const updateFavoritoSQL = "UPDATE Favoritos SET ?";
+  const updateFavoritoSQL = `UPDATE Favoritos SET ? WHERE nickName="${nick}"`;
 
   connection.query(checkFavoritoSQL, (error, result) => {
     if (error) throw error;
