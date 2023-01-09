@@ -266,6 +266,22 @@ app.get("/courses", (req, res) => {
   });
 });
 
+// Obtener usuario por nickName
+app.get("/courses/:id", (req, res) => {
+  const { id } = req.params;
+
+  const getOneCourseSQL = `SELECT * FROM Cursos WHERE id = "${id}"`;
+
+  connection.query(getOneCourseSQL, (err, result) => {
+    if (err) throw err;
+    if (result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).send("Curso no encontrado...");
+    }
+  });
+});
+
 // Obtener todos los favoritos
 app.get("/favoritos", (req, res) => {
   const getFavoritosSQL = "SELECT * FROM Favoritos ORDER BY id ASC";
